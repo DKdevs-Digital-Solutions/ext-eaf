@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "DKdevs++",
+  "version": "1.0.5",
+  "description": "Extensão com utilitários para usar na plataforma BLiP.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png"
+  },
+  "action": {
+    "default_title": "BLIP Extension",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://*.blip.ai/*",
+    "https://*.desk.blip.ai/*",
+    "https://extension.services.dkdevs.com.br/*",
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.desk.blip.ai/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ]
+}
