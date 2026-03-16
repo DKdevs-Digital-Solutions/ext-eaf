@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Brasil Antenado</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="title"></div>
+      <button id="refreshBtn" class="refresh-icon" title="Atualizar" aria-label="Atualizar">↻</button>
+    </header>
+
+    <section class="protocol-card">
+      <div class="eyebrow">Protocolo</div>
+      <div class="protocol-actions">
+        <div class="protocol-chip">
+          <span id="protocolValue">···</span>
+          <button id="copyProtocolBtn" class="copy-icon-btn" type="button" title="Copiar protocolo" aria-label="Copiar protocolo"><span class="copy-icon" aria-hidden="true">⧉</span></button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <button data-tab="validador" class="tab active">Validador</button>
+      <button data-tab="cliente" class="tab">Cliente</button>
+      <button data-tab="anexo" class="tab">Anexos</button>
+      <button data-tab="agendamento" class="tab">Agendamento</button>
+    </nav>
+
+    <main class="panel-body">
+      <div id="statusBox" class="status muted">Abra um ticket no Blip Desk para carregar os dados.</div>
+
+      <section id="tab-validador" class="tab-panel active">
+        <div id="validatorEmpty" class="empty">Aguardando CPF e operador para montar o validador.</div>
+        <div id="validatorShell" class="validator-shell">
+          <div id="validatorLoader" class="validator-loader hidden" aria-live="polite">
+            <div class="spinner" aria-hidden="true"></div>
+            <span>Carregando validador...</span>
+          </div>
+          <iframe id="validatorFrame" title="Validador"></iframe>
+        </div>
+      </section>
+
+      <section id="tab-cliente" class="tab-panel">
+        <div id="customerGrid" class="grid"></div>
+      </section>
+
+      <section id="tab-anexo" class="tab-panel">
+        <div id="attachmentsList" class="stack"></div>
+      </section>
+
+      <section id="tab-agendamento" class="tab-panel">
+        <div id="scheduleGrid" class="grid"></div>
+      </section>
+    </main>
+  </div>
+
+
+  <div id="imageModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="true"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-label="Visualização de anexo">
+      <button id="imageModalClose" class="modal-close" type="button" aria-label="Fechar">×</button>
+      <button id="imageModalPrev" class="modal-nav modal-prev" type="button" aria-label="Imagem anterior">‹</button>
+      <button id="imageModalNext" class="modal-nav modal-next" type="button" aria-label="Próxima imagem">›</button>
+      <div class="modal-image-wrap">
+        <img id="imageModalImg" class="modal-image" alt="Anexo" />
+      </div>
+      <div id="imageModalCaption" class="modal-caption"></div>
+    </div>
+  </div>
+  <div id="copyToast" class="copy-toast" aria-live="polite"></div>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

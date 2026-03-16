@@ -3,129 +3,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BLIP Extension</title>
+  <title>Brasil Antenado</title>
   <style>
-    :root{
-      --bg:#0b1220;
-      --text:#e8eefc;
-      --muted:rgba(232,238,252,.72);
-      --border:rgba(232,238,252,.12);
-      --ok:#22c55e;
-      --btn:#1b2a4f;
-      --btnHover:#223463;
-      --shadow:0 8px 24px rgba(0,0,0,.35);
-      --radius:14px;
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      width:360px;
-      padding:12px;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: radial-gradient(1200px 600px at 20% -10%, rgba(59,130,246,.35), transparent 60%),
-                  radial-gradient(900px 500px at 110% 10%, rgba(34,197,94,.22), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-    }
-    .header{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 12px;
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      background:rgba(15,27,51,.75);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-    }
-    .title{ display:flex; flex-direction:column; gap:2px; min-width:0; }
-    .title h1{ font-size:14px; margin:0; letter-spacing:.2px; }
-    .title .sub{ font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .dot{ width:10px;height:10px;border-radius:999px; background:rgba(148,163,184,.6); box-shadow:0 0 0 4px rgba(148,163,184,.12); flex:0 0 auto; }
-    .dot.ok{ background:var(--ok); box-shadow:0 0 0 4px rgba(34,197,94,.18); }
-    .card{
-      margin-top:12px; padding:12px;
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      background:rgba(15,27,51,.78);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-    }
-    .toprow{ display:flex;align-items:center;justify-content:space-between;gap:10px; }
-    .toprow .label{ font-size:12px;color:var(--muted);font-weight:700; }
-    .toprow #count{ font-size:12px;color:var(--muted); }
-    .list{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
-    .row{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 10px;
-      border:1px solid var(--border);
-      border-radius:12px;
-      background:rgba(11,18,32,.45);
-    }
-    .nameWrap{ min-width:0; }
-    .name{ font-size:13px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:230px; }
-    .meta{ margin-top:3px; font-size:11px; color:rgba(232,238,252,.55); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:230px; }
-    .badge{
-      display:inline-flex; align-items:center; gap:6px;
-      font-size:11px; font-weight:800;
-      padding:4px 10px;
-      border-radius:999px;
-      border:1px solid rgba(34,197,94,.35);
-      background:rgba(34,197,94,.14);
-      color:#d9ffe7;
-      flex:0 0 auto;
-    }
-    .badge .miniDot{ width:7px;height:7px;border-radius:999px;background:var(--ok); }
-    .empty{
-      font-size:12px; color:var(--muted);
-      padding:10px;
-      border:1px dashed rgba(232,238,252,.18);
-      border-radius:12px;
-      background:rgba(11,18,32,.35);
-    }
-    .actions{ margin-top:12px; display:flex; gap:8px; }
-    button{
-      width:100%;
-      border:1px solid var(--border);
-      background:var(--btn);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:800;
-      font-size:12px;
-      letter-spacing:.2px;
-      transition: transform .06s ease, background .15s ease;
-    }
-    button:hover{ background:var(--btnHover); }
-    button:active{ transform: translateY(1px); }
-    .hint{ margin-top:10px; font-size:11px; color:rgba(232,238,252,.55); text-align:center; }
+    body{margin:0;width:280px;padding:16px;font-family:Arial,Helvetica,sans-serif;background:#f6f8fb;color:#162033}
+    .card{background:#fff;border:1px solid #dbe2ea;border-radius:14px;padding:14px}
+    h1{font-size:16px;margin:0 0 8px}
+    p{font-size:13px;line-height:1.4;color:#5b667a;margin:0 0 12px}
+    button{width:100%;border:1px solid #cdd8ea;background:#2f6df6;color:#fff;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer}
+    button[disabled]{background:#c9d5f2;border-color:#c9d5f2;cursor:not-allowed}
+    .hint{margin-top:10px;font-size:12px;color:#6b7280}
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="title">
-      <h1>Features</h1>
-      <div class="sub">Ativas para a aba atual</div>
-    </div>
-    <div id="statusDot" class="dot" title="Status"></div>
-  </div>
-
   <div class="card">
-    <div class="toprow">
-      <div class="label">Ativas</div>
-      <div id="count">—</div>
-    </div>
-
-    <div id="content" class="list">
-      <div class="empty">Carregando…</div>
-    </div>
-
-    <div class="actions">
-      <button id="refresh">Atualizar</button>
-    </div>
-
-    <div class="hint">Abra o Blip Desk para ver os recursos.</div>
+    <h1>Brasil Antenado</h1>
+    <p id="status">Abra o Blip Desk para usar.</p>
+    <button id="openSidePanel" disabled>Abrir painel</button>
+    <div class="hint">Esta extensão usa apenas o painel lateral do Desk.</div>
   </div>
-
   <script src="popup.js"></script>
 </body>
 </html>

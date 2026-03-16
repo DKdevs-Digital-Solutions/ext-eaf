@@ -128,26 +128,45 @@
 
   window.addEventListener("message", (ev) => {
     const data = ev.data;
-    if (!data?.__blipExt || data.type !== "ENABLE") return;
-    enabled = !!data.enabled;
-    if (data.settings) settings = data.settings;
-    if (data.subdomain) tfState.subdomain = data.subdomain;
-    if (enabled && !agentName) loadAgentName();
-    if (enabled) {
-      tfInject();
-      if (!isTaggingEnabled()) {
-        document.querySelectorAll("[data-dkdevspp-orig-display]").forEach(el => {
-          el.style.display = el.dataset.dkdevsppOrigDisplay || "";
-        });
-        document.querySelectorAll("[" + DK_MENU_MARK + "]").forEach(el => {
-          el.removeAttribute(DK_MENU_MARK);
-        });
+    if (!data?.__blipExt) return;
+
+    if (data.type === "ENABLE") {
+      enabled = !!data.enabled;
+      if (data.settings) settings = data.settings;
+      if (data.subdomain) tfState.subdomain = data.subdomain;
+      if (enabled && !agentName) loadAgentName();
+      if (enabled) {
+        tfInject();
+        if (!isTaggingEnabled()) {
+          document.querySelectorAll("[data-dkdevspp-orig-display]").forEach(el => {
+            el.style.display = el.dataset.dkdevsppOrigDisplay || "";
+          });
+          document.querySelectorAll("[" + DK_MENU_MARK + "]").forEach(el => {
+            el.removeAttribute(DK_MENU_MARK);
+          });
+        }
+        if (isSidebarEnabled()) renderSidebar();
+        else removeSidebar();
+      } else {
+        tfRemove();
+        removeSidebar();
       }
-      if (isSidebarEnabled()) renderSidebar();
-      else removeSidebar();
-    } else {
-      tfRemove();
-      removeSidebar();
+      return;
+    }
+
+    if (data.type === 'REFRESH_PANEL_CONTEXT') {
+      if (!enabled || !isSidebarEnabled()) return;
+      const activeTicketId = sidebarState.ticketId || getCurrentTicketId();
+      const activeDisplay = sidebarState.ticketDisplay || activeTicketId || '';
+      if (data.forceReload && activeTicketId) {
+        loadSidebarData(activeTicketId, activeDisplay);
+        return;
+      }
+      if (activeTicketId && (!sidebarState.ticketId || sidebarState.ticketId !== activeTicketId)) {
+        loadSidebarData(activeTicketId, activeDisplay);
+        return;
+      }
+      emitSidePanelContext();
     }
   });
 
@@ -1567,6 +1586,7 @@
     lastLoadKey: "",
     lastObservedTicketId: null,
     lastContactSignature: "",
+    lastEmittedPanelSignature: "",
   };
 
   function isSidebarEnabled() {
@@ -1579,6 +1599,50 @@
     // A API retorna os campos dentro de feat.config — merge para compatibilidade
     const nested = (feat.config && typeof feat.config === 'object') ? feat.config : {};
     return { ...nested, ...feat, config: undefined };
+  }
+
+  function isExtensionSidePanelMode() {
+    const cfg = getSidebarSettings();
+    return cfg.useExtensionSidePanel !== false;
+  }
+
+  function requestExtensionSidePanelOpen() {
+    if (!isSidebarEnabled() || !isExtensionSidePanelMode()) return;
+    try {
+      window.postMessage({
+        __dkSidePanel: true,
+        type: 'OPEN_SIDE_PANEL_REQUEST'
+      }, '*');
+    } catch {}
+  }
+
+  function emitSidePanelContext() {
+    if (!isSidebarEnabled() || !isExtensionSidePanelMode()) return;
+    const payload = {
+      visible: !!sidebarState.visible,
+      collapsed: !!sidebarState.collapsed,
+      activeTab: sidebarState.activeTab || 'cliente',
+      ticketId: sidebarState.ticketId || '',
+      ticketDisplay: sidebarState.ticketDisplay || '',
+      protocol: sidebarState.protocol || '',
+      protocolLabel: sidebarState.protocolLabel || '',
+      customer: sidebarState.customer || {},
+      schedule: sidebarState.schedule || {},
+      attachments: Array.isArray(sidebarState.attachments) ? sidebarState.attachments : [],
+      validatorUrl: sidebarState.validatorUrl || '',
+      loading: !!sidebarState.loading,
+      error: sidebarState.error || ''
+    };
+
+    const signature = JSON.stringify(payload);
+    if (signature === sidebarState.lastEmittedPanelSignature) return;
+    sidebarState.lastEmittedPanelSignature = signature;
+
+    window.postMessage({
+      __dkSidePanel: true,
+      type: 'SIDEPANEL_CONTEXT',
+      payload
+    }, '*');
   }
 
   function apiFetchViaContent(url, options = {}) {
@@ -2290,6 +2354,11 @@
 
   function renderSidebar() {
     if (!isSidebarEnabled()) return;
+    if (isExtensionSidePanelMode()) {
+      removeSidebar();
+      emitSidePanelContext();
+      return;
+    }
     const host = ensureSidebarHost();
     // Sem ticket selecionado: host já fica oculto via ensureSidebarHost
     if (!sidebarState.ticketId) return;
@@ -2336,21 +2405,58 @@
         <div class="dkcrm-body">${renderBody()}</div>
       </section>
     `;
+    emitSidePanelContext();
   }
 
   function removeSidebar() {
     document.getElementById(DK_SIDEBAR_HOST_ID)?.remove();
   }
 
+  function getAgentEmail() {
+    const candidates = [
+      'ajs_user_traits',
+      'auth',
+      'blipDeskAccount',
+      'blip-account',
+      'user',
+    ];
+
+    for (const key of candidates) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const parsed = safeParse(raw);
+        if (!parsed || typeof parsed !== 'object') continue;
+        const email = parsed?.email || parsed?.user?.email || parsed?.traits?.email || parsed?.account?.email;
+        if (email && String(email).trim()) return String(email).trim();
+      } catch {}
+    }
+
+    return '';
+  }
+
   function buildValidatorUrl(baseUrl, ticketId, protocol) {
-    if (!baseUrl) return '';
+    const cpf = String(sidebarState?.customer?.cpf || sidebarState?.customer?.document || '').replace(/\D+/g, '');
+    const emailOperador = getAgentEmail();
+
+    let resolvedBaseUrl = String(baseUrl || '').trim();
+    if (!resolvedBaseUrl) {
+      resolvedBaseUrl = 'https://sigaantenado.datasintese.com/crm_eaf/validacao_beneficiario.php?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMjAyNCIsImlhdCI6MTcwMTg5MzIzM30.A-y9Zr4VpWfhQAEwmaKo4u6Lbu7-Sq5H9X_hRdAdJLY&id_crm=2024171953&grupo=9';
+    }
+
     try {
-      const url = new URL(baseUrl);
-      if (ticketId) url.searchParams.set('ticketId', ticketId);
-      if (protocol) url.searchParams.set('protocol', protocol);
+      resolvedBaseUrl = resolvedBaseUrl
+        .replace(/\(cpf aqui\)/gi, encodeURIComponent(cpf))
+        .replace(/\(usu[aá]rio logado aqui\)/gi, encodeURIComponent(emailOperador));
+
+      const url = new URL(resolvedBaseUrl);
+      if (cpf) url.searchParams.set('cpf', cpf);
+      if (emailOperador) url.searchParams.set('email_operador', emailOperador);
       return url.toString();
     } catch {
-      return String(baseUrl || '');
+      return String(resolvedBaseUrl || '')
+        .replace(/\(cpf aqui\)/gi, cpf)
+        .replace(/\(usu[aá]rio logado aqui\)/gi, emailOperador);
     }
   }
 
@@ -2402,6 +2508,7 @@
     // Novo ticket: inicia colapsado — apenas a nav lateral fica visível
     if (isNewTicket) sidebarState.collapsed = true;
     if (!sidebarState.activeTab) sidebarState.activeTab = 'cliente';
+    requestExtensionSidePanelOpen();
     renderSidebar();
     loadSidebarData(ticketId, ticketDisplay);
   }
@@ -2409,6 +2516,16 @@
   function closeSidebar() {
     sidebarState.visible = false;
     sidebarState.ticketId = null;
+    sidebarState.ticketDisplay = '';
+    sidebarState.protocol = '';
+    sidebarState.customer = null;
+    sidebarState.schedule = null;
+    sidebarState.attachments = [];
+    sidebarState.validatorUrl = '';
+    sidebarState.loading = false;
+    sidebarState.error = '';
+    sidebarState.lastEmittedPanelSignature = '';
+    emitSidePanelContext();
     removeSidebar();
   }
 
