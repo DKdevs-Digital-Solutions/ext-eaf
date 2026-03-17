@@ -5,6 +5,12 @@ function isDeskUrl(url) {
   return DESK_URL_RE.test(String(url || ''));
 }
 
+async function enableActionClickToOpenPanel() {
+  try {
+    await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+  } catch {}
+}
+
 async function setDeskSidePanelForTab(tabId, url) {
   if (!tabId) return;
   const isDesk = isDeskUrl(url);
@@ -25,13 +31,20 @@ async function syncKnownTabs() {
   } catch {}
 }
 
+async function initializeSidePanel() {
+  await enableActionClickToOpenPanel();
+  await syncKnownTabs();
+}
+
 chrome.runtime.onInstalled.addListener(() => {
-  syncKnownTabs();
+  initializeSidePanel();
 });
 
 chrome.runtime.onStartup.addListener(() => {
-  syncKnownTabs();
+  initializeSidePanel();
 });
+
+enableActionClickToOpenPanel();
 
 chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
   const nextUrl = info.url || tab?.url;
@@ -98,7 +111,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return;
   }
 
-
   if (msg.type === 'REFRESH_TAB_CONTEXT') {
     const tabId = msg.tabId || sender?.tab?.id;
     if (!tabId) {
@@ -111,32 +123,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       forceReload: msg.forceReload !== false,
       reason: msg.reason || 'manual'
     })
-      .then(() => sendResponse?.({ ok: true }))
-      .catch((err) => sendResponse?.({ ok: false, error: String(err?.message || err) }));
-    return true;
-  }
-
-  if (msg.type === 'OPEN_SIDE_PANEL') {
-    const tabId = msg.tabId || sender?.tab?.id;
-    const windowId = msg.windowId || sender?.tab?.windowId;
-    const targetUrl = msg.url || sender?.tab?.url || '';
-
-    if (!tabId || !windowId) {
-      sendResponse?.({ ok: false, error: 'NO_TARGET' });
-      return;
-    }
-
-    if (!isDeskUrl(targetUrl)) {
-      sendResponse?.({ ok: false, error: 'NOT_DESK_TAB' });
-      return;
-    }
-
-    chrome.sidePanel.setOptions({
-      tabId,
-      path: 'sidepanel.html',
-      enabled: true,
-    })
-      .then(() => chrome.sidePanel.open({ tabId, windowId }))
       .then(() => sendResponse?.({ ok: true }))
       .catch((err) => sendResponse?.({ ok: false, error: String(err?.message || err) }));
     return true;

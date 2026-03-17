@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
-  <app appid='mcmdecfllohaakalgbimmdgdobjdbnel'>
-    <updatecheck codebase='https://github.com/DKdevs-Digital-Solutions/ext-eaf/raw/ec75f4035954561f0fc88a727cd514ce0031dead/extensao/extensao-eaf.crx' version='1.0' />
-  </app>
-</gupdate>

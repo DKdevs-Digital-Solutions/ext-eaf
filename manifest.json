@@ -1,15 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Brasil Antenado",
-  "version": "1.0.6",
+  "version": "1.1.4",
   "description": "Extensão com utilitários para usar na plataforma BLiP.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png"
   },
   "action": {
-    "default_title": "BLIP Extension",
-    "default_popup": "popup.html"
+    "default_title": "BLIP Extension"
   },
   "permissions": [
     "storage",
