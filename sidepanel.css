@@ -340,3 +340,406 @@ body.modal-open {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+.warning {
+  border-color: #f5c26b;
+  background: #fff8e8;
+  color: #8a5b00;
+}
+#customerGrid,
+#scheduleGrid {
+  padding-top: 10px;
+}
+.form-card {
+  margin-top: 10px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+.compact-stack {
+  gap: 10px;
+}
+.form-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+.form-help {
+  font-size: 12px;
+  color: var(--muted);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.input-group.full {
+  grid-column: 1 / -1;
+}
+.input-group span {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.input-group input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text);
+}
+.primary-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  background: var(--blue);
+  color: #fff;
+  padding: 11px 12px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.primary-btn:hover,
+.primary-btn:focus-visible {
+  opacity: .95;
+  outline: none;
+}
+.mini-feedback {
+  min-height: 18px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.schedule-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.schedule-option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #f8fbff;
+  border: 1px solid #dce8ff;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+.schedule-option input {
+  margin-top: 2px;
+}
+.schedule-option strong {
+  display: block;
+  font-size: 13px;
+}
+.schedule-option span {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+
+#tab-cliente,
+#tab-agendamento {
+  overflow-y: auto;
+}
+
+#customerGrid.grid,
+#scheduleGrid.grid {
+  display: block;
+}
+
+#customerGrid .field,
+#scheduleGrid .field {
+  width: 100%;
+}
+
+
+.schedule-option {
+  align-items: center;
+}
+
+.schedule-option div {
+  min-width: 0;
+}
+
+.schedule-option strong,
+.schedule-option span {
+  word-break: break-word;
+}
+
+
+.success {
+  border-color: #b7e4c7;
+  background: #effaf3;
+  color: #166534;
+}
+.secondary-btn {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  padding: 11px 12px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.schedule-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+#customerGrid .grid.customer-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  align-items: start;
+}
+#customerGrid .grid.customer-info-grid .field.full {
+  grid-column: 1 / -1;
+}
+.form-grid.distributed {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-items: start;
+}
+.input-group.disabled input {
+  background: #f1f3f5;
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+.input-group.disabled span {
+  color: #6b7280;
+}
+@media (max-width: 420px) {
+  #customerGrid .grid.customer-info-grid,
+  .form-grid.distributed,
+  .schedule-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ajustes de distribuição */
+#customerGrid.grid,
+#scheduleGrid.grid {
+  display: block;
+}
+#customerGrid .grid.customer-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-items: start;
+}
+#customerGrid .grid.customer-info-grid .field.full,
+.customer-form-grid .span-2 {
+  grid-column: 1 / -1;
+}
+.customer-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-items: start;
+}
+.customer-form-grid .input-group,
+.customer-info-grid .field {
+  min-height: 84px;
+}
+.customer-form-grid .input-group.span-2,
+.customer-info-grid .field.full {
+  min-height: auto;
+}
+.form-grid.distributed {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.input-group {
+  min-width: 0;
+}
+.input-group input {
+  min-width: 0;
+}
+.input-group.disabled input {
+  background: #f1f3f5;
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+.input-group.editable input {
+  background: #fff;
+}
+.schedule-actions.schedule-actions-single {
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 420px) {
+  #customerGrid .grid.customer-info-grid,
+  .customer-form-grid,
+  .form-grid.distributed,
+  .schedule-actions.schedule-actions-single {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.customer-info-grid .field div,
+.customer-form-grid .input-group input {
+  white-space: normal;
+}
+
+
+.customer-layout-card {
+  padding: 12px;
+}
+.customer-pairs-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.customer-pairs-grid .span-2 {
+  grid-column: 1 / -1;
+}
+.customer-pairs-grid .input-group {
+  min-width: 0;
+}
+.customer-pairs-grid .input-group input {
+  min-width: 0;
+}
+.customer-pairs-grid .input-group.disabled input {
+  background: #f1f3f5;
+}
+.customer-pairs-grid .input-group.editable input {
+  background: #fff;
+}
+.schedule-actions {
+  grid-template-columns: 1fr;
+}
+
+
+/* v1.2.1: força 2 colunas na aba Cliente mesmo na largura padrão do sidepanel */
+#tab-cliente {
+  overflow-x: hidden;
+}
+#customerGrid {
+  padding-top: 8px;
+}
+#customerGrid .customer-layout-card {
+  margin-top: 0;
+  padding: 10px;
+}
+#customerGrid .customer-pairs-grid,
+#customerGrid .customer-form-grid,
+#customerGrid .form-grid.distributed {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  align-items: start;
+}
+#customerGrid .customer-pairs-grid .span-2,
+#customerGrid .customer-form-grid .span-2 {
+  grid-column: 1 / -1;
+}
+#customerGrid .input-group {
+  min-width: 0;
+  gap: 4px;
+}
+#customerGrid .input-group span {
+  font-size: 10px;
+  line-height: 1.2;
+}
+#customerGrid .input-group input {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+#customerGrid .primary-btn {
+  padding: 10px 12px;
+}
+/* Mantém ações do agendamento em 1 coluna, mas nunca derruba o formulário do cliente */
+@media (max-width: 420px) {
+  #customerGrid .customer-pairs-grid,
+  #customerGrid .customer-form-grid,
+  #customerGrid .form-grid.distributed {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .schedule-actions,
+  .schedule-actions.schedule-actions-single {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* v1.2.2: layout do cliente mais compacto e ordem dos campos ajustada */
+#customerGrid {
+  padding-top: 4px;
+}
+#customerGrid .customer-layout-card {
+  margin-top: 0;
+  padding: 8px;
+}
+#customerGrid .customer-pairs-grid,
+#customerGrid .customer-form-grid,
+#customerGrid .form-grid.distributed {
+  gap: 6px !important;
+}
+#customerGrid .input-group {
+  gap: 3px;
+  margin: 0;
+}
+#customerGrid .input-group span {
+  font-size: 10px;
+  line-height: 1.1;
+  margin: 0;
+}
+#customerGrid .input-group input {
+  padding: 7px 9px;
+  min-height: 36px;
+}
+.customer-form-grid .input-group,
+.customer-info-grid .field,
+.customer-pairs-grid .input-group {
+  min-height: 0 !important;
+}
+.schedule-actions.schedule-actions-single {
+  grid-template-columns: 1fr 1fr;
+}
+
+
+/* v1.2.3: cliente mais compacto na largura padrão e agendamento resetado ao trocar de aba */
+#customerGrid {
+  padding-top: 2px;
+}
+#customerGrid .customer-layout-card {
+  padding: 6px;
+}
+#customerGrid .customer-pairs-grid,
+#customerGrid .customer-form-grid,
+#customerGrid .form-grid.distributed {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  column-gap: 6px !important;
+  row-gap: 4px !important;
+}
+#customerGrid .input-group {
+  gap: 2px;
+}
+#customerGrid .input-group span {
+  font-size: 10px;
+  line-height: 1;
+}
+#customerGrid .input-group input {
+  padding: 6px 8px;
+  min-height: 34px;
+  font-size: 11px;
+}
+#customerGrid .primary-btn {
+  margin-top: 6px;
+}
+#customerGrid .mini-feedback {
+  min-height: 14px;
+  font-size: 11px;
+}
