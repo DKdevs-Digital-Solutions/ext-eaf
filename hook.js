@@ -1691,10 +1691,10 @@
   }
 
   function getProtocolFromPayload(protocolPayload) {
-    if (!protocolPayload) return "";
-    if (typeof protocolPayload === "string") return protocolPayload;
-    return protocolPayload.protocol || protocolPayload.id || protocolPayload.ticketId || "";
-  }
+  if (!protocolPayload) return "";
+  if (typeof protocolPayload === "string") return protocolPayload;
+  return protocolPayload.protocolo || protocolPayload.id || protocolPayload.ticketId || "";
+}
 
   function extractIdentityFromData(data) {
     if (!data || typeof data !== 'object') return '';
@@ -1854,7 +1854,7 @@
     sidebarState.ticketId = ticketId;
     sidebarState.ticketDisplay = ticketDisplay || sidebarState.ticketDisplay || ticketId;
     sidebarState.customer = contact;
-    sidebarState.protocol = contact?.protocol || ticketId || '';
+    sidebarState.protocol = contact?.protocolo || ticketId || '';
     sidebarState.protocolLabel = getSidebarSettings().crmLabel || 'Integração lateral do CRM';
     sidebarState.schedule = {};
     sidebarState.attachments = [];
@@ -1876,7 +1876,7 @@
     const extras = resource && typeof resource.extras === 'object' && resource.extras ? resource.extras : {};
     const phone = resource.phoneNumber || extras.phoneNumber || extras.identifier || extras['tunnel.originator'] || '';
     const email = resource.email && String(resource.email).trim() ? resource.email : (extras.email || '');
-    const protocol = extras.protocol || resource.protocol || '';
+    const protocol = extras.protocolo || resource.protocolo || '';
     const addressParts = [
       extras.logradouro,
       extras.numLogradouro && String(extras.numLogradouro).toLowerCase() !== 'sn' ? `, ${extras.numLogradouro}` : (extras.numLogradouro ? `, ${extras.numLogradouro}` : ''),
