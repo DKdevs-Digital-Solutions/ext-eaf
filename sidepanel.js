@@ -166,7 +166,7 @@ async function ensureAttachmentsLoaded(state, { force = false } = {}) {
   }
 
   const token = ++attachmentsRequestToken;
-  listEl.innerHTML = '<div class="empty">Buscando anexos no R2...</div>';
+  listEl.innerHTML = '<div class="empty">Buscando anexos...</div>';
 
   try {
     const attachments = await fetchR2Attachments(protocol);
